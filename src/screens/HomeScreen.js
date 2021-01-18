@@ -221,6 +221,9 @@ export const HomeScreen = ({ navigation }) => {
             setModalVisible(true);
             // navigation.navigate('MuscleScreen');
           }}
+          onLongPress={() => {
+            navigation.navigate('PlayScreen');
+          }}
         >
           <Text style={styles.startBtnText}>START</Text>
         </TouchableOpacity>
