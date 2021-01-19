@@ -278,14 +278,11 @@ export function PlayScreen() {
     <View style={styles.container}>
       <SafeAreaView style={styles.innerContainer}>
         <LottieView
-          style={{
-            width: 100,
-            height: 100,
-          }}
-          source={require('../assets/lottie/38473-fireworks-icon.json')}
+          style={styles.lottie}
+          source={require('../assets/lottie/37723-confetti-partyyy.json')}
           speed={0.8}
-          autoPlay={false}
-          loop={false}
+          autoPlay
+          // loop={true}
         />
         <View style={styles.body}>
           <Animated.View
@@ -410,6 +407,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 15,
     paddingHorizontal: 15,
+    position: 'relative',
+  },
+  lottie: {
+    position: 'absolute',
   },
   barBox: {
     width: '60%',
