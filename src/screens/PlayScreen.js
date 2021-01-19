@@ -5,10 +5,13 @@ import {
   StyleSheet, Animated, Image,
   SafeAreaView
 } from 'react-native';
+import LottieView from 'lottie-react-native';
 import * as firebase from 'firebase';
 const db = firebase.firestore();
 /* constats */
+import { WindowWidth } from '../components/WindowWidth';
 import { MAIN_COLOR } from '../constants/index';
+const barWidth = (WindowWidth - 30) * 0.5;
 
 const wait = (timeout) => {
   return new Promise(resolve => {
@@ -55,46 +58,72 @@ export function Eyes({count}) {
 export function PlayScreen() {
   // const [move, setMove] = useState(false);
   const [color, setColor] = useState(1);
+  const [level, setLevel] = useState(1);
   const [count, setCount] = useState(0);
 
   const colors = [
     'red', 'green', 'yellow', 'blue', 'pink', 'black'
   ];
 
+  const animeWidth = new Animated.Value(0);
+  const animeColor = new Animated.Value(0);
   const position = new Animated.ValueXY({ x: 0, y: 3 });
   const legUpLeftPosition = new Animated.ValueXY({ x: 0, y: 0 });
   const legUpRightPosition = new Animated.ValueXY({ x: 0, y: 0 });
   const legBottomLeftPosition = new Animated.ValueXY({ x: 0, y: -4 });
   const legBottomRightPosition = new Animated.ValueXY({ x: 0, y: -4 });
-  
-  // const rotateUpLeft = legUpLeftPosition.y.interpolate({
-  //   inputRange: [0, 10],
-  //   outputRange: ['0deg', '45deg']
-  // });
-  // const rotateBottomLeft = legUpLeftPosition.y.interpolate({
-  //   inputRange: [0, 10],
-  //   outputRange: ['0deg', '-45deg']
-  // });
-  // const rotateUpRight = legUpRightPosition.y.interpolate({
-  //   inputRange: [0, 10],
-  //   outputRange: ['0deg', '-45deg']
-  // });
-  // const rotateBottomRight = legUpRightPosition.y.interpolate({
-  //   inputRange: [0, 10],
-  //   outputRange: ['0deg', '45deg']
-  // });
+
+  const interpolateBar = animeWidth.interpolate({inputRange:[0,1],outputRange:[0, barWidth]});
+  const animatedTransition = Animated.timing(animeWidth,{
+    toValue: 1,
+    duration: 800,
+    useNativeDriver: false
+  });
+  const interpolateColor = animeColor.interpolate({inputRange:[0,1],outputRange:['#cdd000', '#3fd800']});
+  const colorTransition = Animated.timing(animeColor,{
+    toValue: 1,
+    duration: 800,
+    useNativeDriver: false
+  });
+
+  const rotateUpLeft = legUpLeftPosition.y.interpolate({
+    inputRange: [0, 10],
+    outputRange: ['0deg', '45deg']
+  });
+  const rotateBottomLeft = legUpLeftPosition.y.interpolate({
+    inputRange: [0, 10],
+    outputRange: ['0deg', '-45deg']
+  });
+  const rotateUpRight = legUpRightPosition.y.interpolate({
+    inputRange: [0, 10],
+    outputRange: ['0deg', '-45deg']
+  });
+  const rotateBottomRight = legUpRightPosition.y.interpolate({
+    inputRange: [0, 10],
+    outputRange: ['0deg', '45deg']
+  });
 
   useEffect(() => {
     const devideone = count % 1;
     if (devideone == 0) {
-      // moveBox();
-      jump();
+      moveBox();
+      // jump();
+      clickAnimate();
     }
     const timer = setTimeout(() => {
       setCount(count + 1);
-    }, 1200);
+    }, 1000);
     return () => clearTimeout(timer);
   }, [count]);
+
+  const clickAnimate = async() => {
+    Animated.parallel([
+      animatedTransition,
+      colorTransition,
+    ]).start(() => {
+      setLevel(level + 1);
+    });
+  };
 
   const moveBox = () => {
     Animated.parallel([
@@ -248,7 +277,16 @@ export function PlayScreen() {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.innerContainer}>
-        {/* <Text>{count}</Text> */}
+        <LottieView
+          style={{
+            width: 100,
+            height: 100,
+          }}
+          source={require('../assets/lottie/38473-fireworks-icon.json')}
+          speed={0.8}
+          autoPlay={false}
+          loop={false}
+        />
         <View style={styles.body}>
           <Animated.View
             style={{
@@ -263,11 +301,6 @@ export function PlayScreen() {
             <TouchableOpacity
               style={styles.innerBox}
               onPress={() => {
-                // if (move) {
-                //   setMove(false);
-                // } else {
-                //   setMove(true);
-                // }
                 changeColor();
               }}
             >
@@ -294,7 +327,7 @@ export function PlayScreen() {
                 transform: [
                   {translateX: legUpLeftPosition.x},
                   {translateY: legUpLeftPosition.y},
-                  // {rotate:rotateUpLeft}
+                  {rotate:rotateUpLeft}
                 ]}}
             >
             </Animated.View>
@@ -305,7 +338,7 @@ export function PlayScreen() {
                 transform: [
                   {translateX: legBottomLeftPosition.x},
                   {translateY: legBottomLeftPosition.y},
-                  // {rotate: rotateBottomLeft}
+                  {rotate: rotateBottomLeft}
                 ]}}
             >
             </Animated.View>
@@ -318,7 +351,7 @@ export function PlayScreen() {
                 transform: [
                   {translateX: legUpRightPosition.x},
                   {translateY: legUpRightPosition.y},
-                  // {rotate:rotateUpRight}
+                  {rotate:rotateUpRight}
                 ]}}
             >
             </Animated.View>
@@ -329,8 +362,26 @@ export function PlayScreen() {
                 transform: [
                   {translateX: legBottomRightPosition.x},
                   {translateY: legBottomRightPosition.y},
-                  // {rotate: rotateBottomRight}
+                  {rotate: rotateBottomRight}
                 ]}}
+            >
+            </Animated.View>
+          </View>
+        </View>
+        <View style={styles.barBox}>
+          <View style={styles.levelBox}>
+            <Text style={styles.levelunit}>Lv.</Text>
+            <Animated.Text style={styles.levelNumText}>
+              {level}
+            </Animated.Text>
+          </View>
+          <View style={styles.barBg}>
+            <Animated.View
+              style={{
+                ...styles.bar,
+                width: interpolateBar,
+                backgroundColor: interpolateColor,
+              }}
             >
             </Animated.View>
           </View>
@@ -349,7 +400,8 @@ PlayScreen.propTypes = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: MAIN_COLOR,
+    backgroundColor: '#fff',
+    // backgroundColor: MAIN_COLOR,
   },
   innerContainer: {
     width: '100%',
@@ -358,6 +410,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 15,
     paddingHorizontal: 15,
+  },
+  barBox: {
+    width: '60%',
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    marginTop: 20,
+  },
+  barBg: {
+    width: barWidth,
+    height: 20,
+    backgroundColor: 'lightblue',
+    borderRadius: 10,
+  },
+  bar: {
+    height: 20,
+    borderRadius: 10,
+  },
+  levelBox: {
+    marginLeft: 20,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  levelunit: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  levelNumText: {
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   body: {
     width: 150,
