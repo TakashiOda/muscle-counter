@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {
   View, Text, TouchableOpacity,
@@ -56,10 +56,15 @@ export function Eyes({count}) {
 }
 
 export function PlayScreen() {
-  // const [move, setMove] = useState(false);
+  // const [play, setPlay] = useState(false);
   const [color, setColor] = useState(1);
   const [level, setLevel] = useState(1);
   const [count, setCount] = useState(0);
+
+  const homeAnimation = useRef();
+  const playAnimation = () => {
+    homeAnimation.current.play(1, 199);
+  }
 
   const colors = [
     'red', 'green', 'yellow', 'blue', 'pink', 'black'
@@ -104,11 +109,11 @@ export function PlayScreen() {
   });
 
   useEffect(() => {
-    const devideone = count % 1;
+    const devideone = count % 5;
     if (devideone == 0) {
-      moveBox();
+      // moveBox();
       // jump();
-      clickAnimate();
+      // clickAnimate();
     }
     const timer = setTimeout(() => {
       setCount(count + 1);
@@ -281,8 +286,10 @@ export function PlayScreen() {
           style={styles.lottie}
           source={require('../assets/lottie/37723-confetti-partyyy.json')}
           speed={0.8}
-          autoPlay
-          // loop={true}
+          autoPlay={false}
+          loop={false}
+          progress={0}
+          ref={homeAnimation}
         />
         <View style={styles.body}>
           <Animated.View
@@ -298,7 +305,12 @@ export function PlayScreen() {
             <TouchableOpacity
               style={styles.innerBox}
               onPress={() => {
-                changeColor();
+                jump();
+                // changeColor();
+              }}
+              onLongPress={() => {
+                playAnimation();
+                // changeColor();
               }}
             >
             </TouchableOpacity>
