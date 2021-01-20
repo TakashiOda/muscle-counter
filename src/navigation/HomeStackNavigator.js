@@ -6,6 +6,7 @@ import { HomeScreen } from '../screens/HomeScreen';
 import { ProfileSetScreen } from '../screens/ProfileSetScreen';
 import { MuscleScreen } from '../screens/MuscleScreen';
 import { PlayScreen } from '../screens/PlayScreen';
+import { LevelScreen } from '../screens/LevelScreen';
 
 const HomeStack = createStackNavigator();
 export const HomeStackNavigator = ({ navigation, route }) => {
@@ -33,6 +34,11 @@ export const HomeStackNavigator = ({ navigation, route }) => {
         name='PlayScreen'
         options={{ headerShown: false }}
         component={PlayScreen}
+      />
+      <HomeStack.Screen
+        name='LevelScreen'
+        options={{ headerShown: false }}
+        component={LevelScreen}
       />
     </HomeStack.Navigator>
   );

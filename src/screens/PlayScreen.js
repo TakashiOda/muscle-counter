@@ -56,38 +56,41 @@ export function Eyes({count}) {
 }
 
 export function PlayScreen() {
-  // const [play, setPlay] = useState(false);
-  const [color, setColor] = useState(1);
+  const [crackerOn, setCrackerOn] = useState(false);
+  const [presentExp, setPresentExp] = useState(10);
+  const [presentLevel, setPresentLevel] = useState(1);
   const [level, setLevel] = useState(1);
   const [count, setCount] = useState(0);
 
-  const homeAnimation = useRef();
-  const playAnimation = () => {
-    homeAnimation.current.play(1, 199);
-  }
+  // const exps = [10,11,12,13,14,15,16,17,18,19,20];
+  // const models = [];
 
-  const colors = [
-    'red', 'green', 'yellow', 'blue', 'pink', 'black'
-  ];
+  // const times = 30;
+  // let levelnum = 0;
+  // let needExp = 10;
+  // let totalExp = 0;
+  // for(var i=0; i < times; i++){
+  //   levelnum += 1;
+  //   needExp = Math.floor(needExp * 1.1);
+  //   totalExp += needExp;
+  //   models.push({
+  //     levelnum,
+  //     needExp,
+  //     totalExp,
+  //   });
+  // }
 
   const animeWidth = new Animated.Value(0);
-  const animeColor = new Animated.Value(0);
   const position = new Animated.ValueXY({ x: 0, y: 3 });
   const legUpLeftPosition = new Animated.ValueXY({ x: 0, y: 0 });
   const legUpRightPosition = new Animated.ValueXY({ x: 0, y: 0 });
   const legBottomLeftPosition = new Animated.ValueXY({ x: 0, y: -4 });
   const legBottomRightPosition = new Animated.ValueXY({ x: 0, y: -4 });
 
-  const interpolateBar = animeWidth.interpolate({inputRange:[0,1],outputRange:[0, barWidth]});
+  const interpolateBar = animeWidth.interpolate({inputRange:[0,1],outputRange:[0, 400]});
   const animatedTransition = Animated.timing(animeWidth,{
     toValue: 1,
-    duration: 800,
-    useNativeDriver: false
-  });
-  const interpolateColor = animeColor.interpolate({inputRange:[0,1],outputRange:['#cdd000', '#3fd800']});
-  const colorTransition = Animated.timing(animeColor,{
-    toValue: 1,
-    duration: 800,
+    duration: 1000,
     useNativeDriver: false
   });
 
@@ -109,11 +112,11 @@ export function PlayScreen() {
   });
 
   useEffect(() => {
-    const devideone = count % 5;
+    const devideone = count % 1;
     if (devideone == 0) {
       // moveBox();
       // jump();
-      // clickAnimate();
+      clickAnimate();
     }
     const timer = setTimeout(() => {
       setCount(count + 1);
@@ -121,10 +124,22 @@ export function PlayScreen() {
     return () => clearTimeout(timer);
   }, [count]);
 
-  const clickAnimate = async() => {
+  // useEffect(() => {
+  //   experiencesToLevels(53);
+  // }, []);
+
+  // const experiencesToLevels = async(num) => {
+  //   const index = models.findIndex(m => m.totalExp >= num);
+  //   const progressExp = num - (models[index - 1].totalExp);
+  //   const ratio = (progressExp / models[index].totalExp).toFixed(2);
+  //   console.log(index); //これが上がった後のlevel
+  //   console.log(progressExp); // ゲージに溜まっている経験値数
+  //   console.log(ratio); //ゲージの表示割合
+  // };
+
+  const clickAnimate = () => {
     Animated.parallel([
       animatedTransition,
-      colorTransition,
     ]).start(() => {
       setLevel(level + 1);
     });
@@ -274,28 +289,22 @@ export function PlayScreen() {
     });
   };
 
-  const changeColor = () => {
-    const nmb = Math.floor(Math.random()*6);
-    setColor(nmb);
-  };
-
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.innerContainer}>
-        <LottieView
+        {/* <LottieView
           style={styles.lottie}
           source={require('../assets/lottie/37723-confetti-partyyy.json')}
-          speed={0.8}
-          autoPlay={false}
+          speed={1}
+          autoPlay
           loop={false}
-          progress={0}
-          ref={homeAnimation}
-        />
+          progress={1}
+          // ref={homeAnimation}
+        /> */}
         <View style={styles.body}>
           <Animated.View
             style={{
               ...styles.moveBox,
-              backgroundColor: colors[color],
               transform: [
                 {translateX: position.x},
                 {translateY: position.y}
@@ -305,12 +314,7 @@ export function PlayScreen() {
             <TouchableOpacity
               style={styles.innerBox}
               onPress={() => {
-                jump();
-                // changeColor();
-              }}
-              onLongPress={() => {
-                playAnimation();
-                // changeColor();
+                // setCrackerOn(true);
               }}
             >
             </TouchableOpacity>
@@ -318,13 +322,13 @@ export function PlayScreen() {
           <Animated.View
             style={{
               ...styles.eyes_image_box,
-              transform: [
-                {translateX: position.x},
-                {translateY: position.y}
-              ]
+              // transform: [
+              //   {translateX: position.x},
+              //   {translateY: position.y}
+              // ]
             }}
           >
-            <Eyes count={count}/>
+            {/* <Eyes count={count}/> */}
           </Animated.View>
         </View>
         <View style={styles.legs}>
@@ -332,7 +336,6 @@ export function PlayScreen() {
             <Animated.View
               style={{ 
                 ...styles.legUp,
-                backgroundColor: colors[color],
                 transform: [
                   {translateX: legUpLeftPosition.x},
                   {translateY: legUpLeftPosition.y},
@@ -343,7 +346,6 @@ export function PlayScreen() {
             <Animated.View
               style={{ 
                 ...styles.legBottom,
-                backgroundColor: colors[color],
                 transform: [
                   {translateX: legBottomLeftPosition.x},
                   {translateY: legBottomLeftPosition.y},
@@ -356,7 +358,6 @@ export function PlayScreen() {
             <Animated.View
               style={{ 
                 ...styles.legUp,
-                backgroundColor: colors[color],
                 transform: [
                   {translateX: legUpRightPosition.x},
                   {translateY: legUpRightPosition.y},
@@ -367,7 +368,6 @@ export function PlayScreen() {
             <Animated.View
               style={{ 
                 ...styles.legBottom,
-                backgroundColor: colors[color],
                 transform: [
                   {translateX: legBottomRightPosition.x},
                   {translateY: legBottomRightPosition.y},
@@ -389,7 +389,6 @@ export function PlayScreen() {
               style={{
                 ...styles.bar,
                 width: interpolateBar,
-                backgroundColor: interpolateColor,
               }}
             >
             </Animated.View>

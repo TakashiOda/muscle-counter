@@ -217,6 +217,14 @@ export const HomeScreen = ({ navigation }) => {
         </View>
         <TouchableOpacity
           style={styles.startBtn}
+          onLongPress={() => {
+            navigation.navigate('LevelScreen');
+          }}
+        >
+          <Text style={styles.startBtnText}>level</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.startBtn}
           onPress={() => {
             setModalVisible(true);
             // navigation.navigate('MuscleScreen');
@@ -305,10 +313,10 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   startBtn: {
-    position: 'absolute',
-    bottom: 20,
+    // position: 'absolute',
+    // bottom: 20,
     width: '100%',
-    height: 200,
+    height: 50,
     backgroundColor: MAIN_DARK_COLOR,
     borderRadius: 20,
     alignItems: 'center',
